@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var request: Request
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -207,7 +206,7 @@ class MainActivity : AppCompatActivity() {
 
 }
 
-//Fragment Activity Interaction Listener Callback Pattern
+//Fragment Activity Interaction Listener Callback Pattern here
 interface SomeCallback{
 
     fun onSuccess()
