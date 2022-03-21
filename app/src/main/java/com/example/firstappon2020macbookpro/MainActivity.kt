@@ -1,5 +1,6 @@
 package com.example.firstappon2020macbookpro
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -11,14 +12,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.DownloadBlock
-import java.util.jar.Manifest
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fetch: Fetch
     private lateinit var request: Request
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,15 +34,19 @@ class MainActivity : AppCompatActivity() {
 
         fetch = Fetch.Impl.getInstance(fetchConfiguration)
 
-        //val url = "http:www.example.com/test.txt"
-        val url = "https://filesamples.com/samples/document/txt/sample2.txt"
-        val file = "/downloads/test.txt"
+       // val url = "http:www.example.com/test.txt"
+        val url = "http://sd5ku4esvp9sq9s.poiuytrewqasdfghjkl.cyou/rlink/The_Walking_Dead_-_S11E14_-_Unknown_e4e44e4c9cbec8081280ad75722ea7a4.mp4"
+        //val url = "https://filesamples.com/samples/document/txt/sample2.txt"
+        //val file = "/downloads1/test.txt"
+        val file = "/downloads/file1.mp4"
 
         request = Request(url, file)
-        request.networkType
-        request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG")
-
+        //request.networkType
+        //request.addHeader("clientKey", "SD78DF93_3947&MVNGHE1WONG")
         fetch.addListener(DownloadListener())
+
+
+
 
 
         downloadButton.setOnClickListener {
@@ -53,12 +56,19 @@ class MainActivity : AppCompatActivity() {
                     //permission denied, request it
 
                     //show popup for runtime permission request
-
                     requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
+                    val intent = Intent(this, NormalAndroidDownloaderActivity::class.java)
+                    startActivity(intent)
+
 
                 }else{
                     //permission already granted, perform download
-                    startDownlaod()
+
+                   // startDownlaod()
+                    //startDownloading()
+                    val intent = Intent(this, NormalAndroidDownloaderActivity::class.java)
+                    startActivity(intent)
+
                 }
             }else{
                 //system is less than marshmellow, runtime permission not needed, perform download\
@@ -69,40 +79,9 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
-
-
-
-
-        fun someFunction(someCallback: SomeCallback){
-            val word = "nice"
-            val letter = "FRY"
-
-            if (word.contains(letter)){
-                someCallback.onSuccess()
-            }else{
-                someCallback.onFailure("$word does not contain $letter")
-            }
-        }
-
-
-        textView.setOnClickListener {
-            someFunction(object : SomeCallback{
-                override fun onSuccess() {
-
-                    Toast.makeText(this@MainActivity, "Inside Success Block", Toast.LENGTH_SHORT).show()
-
-                }
-
-                override fun onFailure(error: String) {
-                    Toast.makeText(this@MainActivity, "Inside Failure Block, $error", Toast.LENGTH_SHORT).show()
-                }
-
-            })
-        }
-
-
     }
+
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when(requestCode){
@@ -123,15 +102,36 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-
     fun startDownlaod() {
         fetch.enqueue(request, { updatedRequest: Request? ->
+            Log.d("REQUEST", "$request   $updatedRequest")
             Toast.makeText(this, "Request $updatedRequest Enqueued for Download ", Toast.LENGTH_LONG).show()
         }) { error: Error? ->
             Toast.makeText(this, "Error Downloading $error", Toast.LENGTH_LONG).show()
         }
     }
+
+
+    private fun startDownloading() {
+       /* val fileUri = DocumentFile.fromTreeUri(this )
+            .createFile("audio/mpeg", FILE_NAME)!!.uri
+        val request = Request(HTTP_URL, fileUri)
+        request.enqueueAction = EnqueueAction.UPDATE_ACCORDINGLY
+*/
+        fetch.enqueue(request, null, { error: Error ->
+                Log.d("FetchTest", "Failed to equeue request")
+                Log.d("REQUEST2", "$request")
+                error.throwable?.printStackTrace()
+                Toast.makeText(this, "Failed to equeue request $error", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+
+
+
+
+
 
     inner class DownloadListener() : AbstractFetchListener() {
 
@@ -144,7 +144,6 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
-
 
 
 
@@ -204,14 +203,5 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-}
-
-//Fragment Activity Interaction Listener Callback Pattern
-interface SomeCallback{
-
-    fun onSuccess()
-
-    fun onFailure(error: String)
 
 }
